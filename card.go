@@ -2,15 +2,49 @@ package deck
 
 import "fmt"
 
-// Card represents a Card with a Face and a Suit
-type Card struct {
-	face Face
-	suit Suit
-}
+// Suit represents the suit of the card (spade, heart, diamond, club)
+type Suit int
+
+// Face represents the face of the card (ace, two...queen, king)
+type Face int
+
+// Constants for Suit ♠♥♦♣
+const (
+	CLUB Suit = iota
+	DIAMOND
+	HEART
+	SPADE
+)
+
+// Constants for Face
+const (
+	ACE Face = iota
+	TWO
+	THREE
+	FOUR
+	FIVE
+	SIX
+	SEVEN
+	EIGHT
+	NINE
+	TEN
+	JACK
+	QUEEN
+	KING
+)
+
+// Global Variables representing the default suits and faces in a deck of cards
+var (
+	SUITS = []Suit{CLUB, DIAMOND, HEART, SPADE}
+	FACES = []Face{ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING}
+)
+
+// Card represents a playing card with a Face and a Suit
+type Card int
 
 func (c Card) String() string {
 	face := ""
-	switch c.face {
+	switch c.Face() {
 	case 0:
 		face = "A"
 	case 1:
@@ -39,7 +73,7 @@ func (c Card) String() string {
 		face = "K"
 	}
 	suit := ""
-	switch c.suit {
+	switch c.Suit() {
 	case 0:
 		suit = "♣"
 	case 1:
@@ -52,43 +86,22 @@ func (c Card) String() string {
 	return fmt.Sprintf("%s%s", face, suit)
 }
 
+// Face is a utility function to get the face of a card
+func (c Card) Face() int {
+	return int(c / 4)
+}
+
+// Suit is a utility function to get the suit of a card
+func (c Card) Suit() int {
+	return int(c % 4)
+}
+
+// NewCard creates a new card with a face and suit
+func NewCard(face Face, suit Suit) Card {
+	return Card(int(face)*4 + int(suit))
+}
+
 // GetSignature is the hex representation of the Face and Suit of the card
 func (c *Card) GetSignature() string {
-	return fmt.Sprintf("%x%x", c.face, c.suit)
-}
-
-// Compare compares 2 cards 1 if the passed in card is greater -1 if its lesser 0 of equal.
-func (c *Card) Compare(k Card) int {
-	if k.face > c.face {
-		return 1
-	}
-
-	if k.face < c.face {
-		return -1
-	}
-
-	if k.suit > c.suit {
-		return 1
-	}
-
-	if k.suit < c.suit {
-		return -1
-	}
-
-	return 0
-}
-
-//IsLessThan returns bool if card passed in is less then
-func (c *Card) IsLessThan(k Card) bool {
-	return c.Compare(k) == 1
-}
-
-//IsGreaterThan return bool if card passed in is greater then
-func (c *Card) IsGreaterThan(k Card) bool {
-	return c.Compare(k) == -1
-}
-
-//IsEqualTo returns true if the card is equal in face and
-func (c *Card) IsEqualTo(k Card) bool {
-	return c.Compare(k) == 0
+	return fmt.Sprintf("%x%x", c.Face(), c.Suit())
 }
